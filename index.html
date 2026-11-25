@@ -770,6 +770,91 @@
       }
     }
 
+
+    /* ANIMATED SAVE SUCCESS OVERLAY */
+    .success-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(13, 35, 64, 0.62);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .success-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .success-popup-card {
+      background: #ffffff;
+      border-radius: 26px;
+      padding: 32px 28px;
+      max-width: 320px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+      transform: scale(0.85) translateY(10px);
+      transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .success-overlay.open .success-popup-card {
+      transform: scale(1) translateY(0);
+    }
+
+    .checkmark-ring {
+      width: 82px;
+      height: 82px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: #ecfdf5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 8px rgba(16, 185, 129, 0.14);
+    }
+
+    .checkmark-svg {
+      width: 48px;
+      height: 48px;
+      stroke: #059669;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .checkmark-circle {
+      stroke-dasharray: 166;
+      stroke-dashoffset: 166;
+    }
+
+    .checkmark-check {
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+    }
+
+    .success-overlay.open .checkmark-circle {
+      animation: strokeAnim 0.45s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+
+    .success-overlay.open .checkmark-check {
+      animation: strokeAnim 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.32s forwards;
+    }
+
+    @keyframes strokeAnim {
+      100% {
+        stroke-dashoffset: 0;
+      }
+    }
+
     @keyframes slideUpSheet {
       from { transform: translateY(24px); opacity: 0.8; }
       to { transform: translateY(0); opacity: 1; }
@@ -860,7 +945,7 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
-            <span class="text-xs font-bold tracking-wide hidden xs:inline sm:inline">Go to</span>
+            <span class="text-xs font-bold tracking-wide hidden xs:inline sm:inline"> </span>
           </button>
 
           <div class="flex items-center gap-2 min-w-0">
@@ -1475,6 +1560,22 @@
   </div>
 
   <!-- =========================================================
+       ANIMATED REGISTRATION SUCCESS OVERLAY (2 SECONDS)
+       ========================================================= -->
+  <div id="regSuccessOverlay" class="success-overlay" aria-live="polite">
+    <div class="success-popup-card">
+      <div class="checkmark-ring">
+        <svg class="checkmark-svg" viewBox="0 0 52 52">
+          <circle class="checkmark-circle" cx="26" cy="26" r="24" />
+          <path class="checkmark-check" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+        </svg>
+      </div>
+      <h3 class="text-2xl font-extrabold text-[#0d2340] mb-1">Thank you!</h3>
+      <p id="regSuccessSubtext" class="text-sm font-semibold text-emerald-700">Registration saved successfully</p>
+    </div>
+  </div>
+
+  <!-- =========================================================
        TOAST / NOTIFICATION BANNER
        ========================================================= -->
   <div id="toastContainer" class="fixed top-16 left-3 right-3 sm:left-auto sm:right-5 sm:top-auto sm:bottom-5 z-50 flex flex-col gap-2 sm:max-w-sm pointer-events-none"></div>
@@ -1799,6 +1900,24 @@
     // =========================================================
     // 1. PUBLIC DONOR REGISTRATION (/registration)
     // =========================================================
+    let regSuccessTimer = null;
+    function showRegSuccessAnimation(name, idMsg = "") {
+      const overlay = document.getElementById("regSuccessOverlay");
+      const subtext = document.getElementById("regSuccessSubtext");
+      if (!overlay) return;
+      if (subtext) {
+        subtext.textContent = `${name ? name + " • " : ""}Saved successfully${idMsg}`;
+      }
+      overlay.classList.remove("open");
+      void overlay.offsetWidth; // trigger reflow so SVG stroke animation replays cleanly
+      overlay.classList.add("open");
+
+      if (regSuccessTimer) clearTimeout(regSuccessTimer);
+      regSuccessTimer = setTimeout(() => {
+        overlay.classList.remove("open");
+      }, 2000);
+    }
+
     async function submitPublicDonor(e) {
       e.preventDefault();
       const name = document.getElementById("regName").value.trim();
@@ -1845,9 +1964,11 @@
           throw new Error(res.message || res.error || "Registration failed.");
         }
 
-        const idMsg = res && res.donorId ? ` (Donor ID: ${res.donorId})` : "";
-        showAlert("regAlert", `Thank you ${name}! Your donor registration has been saved${idMsg}.`, "success");
+        const idMsg = res && res.donorId ? ` • ID: ${res.donorId}` : "";
+        const regAlertBox = document.getElementById("regAlert");
+        if (regAlertBox) regAlertBox.style.display = "none";
         document.getElementById("publicDonorForm").reset();
+        showRegSuccessAnimation(name, idMsg);
       } catch (err) {
         showAlert("regAlert", "Error saving registration: " + err.message, "error");
       } finally {
