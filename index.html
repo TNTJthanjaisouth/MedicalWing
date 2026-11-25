@@ -54,7 +54,7 @@
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
-      padding-bottom: calc(74px + var(--safe-bottom));
+      padding-bottom: calc(24px + var(--safe-bottom));
     }
 
     @media (min-width: 768px) {
@@ -72,66 +72,6 @@
       z-index: 40;
       padding-top: var(--safe-top);
       box-shadow: 0 4px 16px rgba(13, 35, 64, 0.25);
-    }
-
-    /* BOTTOM NATIVE TAB BAR (MOBILE ONLY) */
-    .mobile-bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 45;
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-top: 1px solid #cbd5e1;
-      padding: 6px 8px calc(6px + var(--safe-bottom));
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 6px;
-      box-shadow: 0 -4px 18px rgba(15, 23, 42, 0.08);
-    }
-
-    .mobile-bottom-nav.admin-mode {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    @media (min-width: 768px) {
-      .mobile-bottom-nav {
-        display: none !important;
-      }
-    }
-
-    .bottom-nav-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-      padding: 6px 4px;
-      border-radius: 12px;
-      border: none;
-      background: transparent;
-      color: #64748b;
-      font-size: 10.5px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: all 0.16s ease;
-    }
-
-    .bottom-nav-btn .nav-ico {
-      font-size: 18px;
-      line-height: 1.1;
-    }
-
-    .bottom-nav-btn.active {
-      background: #fef2f2;
-      color: var(--crimson);
-    }
-
-    .bottom-nav-btn.active-navy {
-      background: #eff6ff;
-      color: var(--navy);
     }
 
     /* SLIDE-OUT SIDEBAR DRAWER */
@@ -1468,19 +1408,7 @@
 
     </main>
 
-    <!-- =========================================================
-         NATIVE MOBILE BOTTOM NAVIGATION BAR
-         ========================================================= -->
-    <nav id="mobileBottomNav" class="mobile-bottom-nav" aria-label="Mobile Navigation">
-      <button type="button" id="bnavReg" class="bottom-nav-btn active" onclick="navigateRoute('/registration')">
-        <span class="nav-ico">➕</span>
-        <span data-i18n="bnavReg">Register</span>
-      </button>
-      <button type="button" id="bnavDash" class="bottom-nav-btn" onclick="navigateRoute('/dashboard')">
-        <span class="nav-ico">🛡️</span>
-        <span data-i18n="bnavDash">Admin</span>
-      </button>
-    </nav>
+
 
   </div>
 
@@ -1667,46 +1595,7 @@
       navigateRoute(route);
     }
 
-    function updateMobileBottomNav() {
-      const nav = document.getElementById("mobileBottomNav");
-      if (!nav) return;
-      const route = resolveCurrentRoute();
-      const user = getSessionUser();
-
-      if (route === "/dashboard" && user) {
-        nav.classList.add("admin-mode");
-        nav.innerHTML = `
-          <button type="button" class="bottom-nav-btn" onclick="navigateRoute('/registration')">
-            <span class="nav-ico">➕</span>
-            <span>Register</span>
-          </button>
-          <button type="button" class="bottom-nav-btn ${activeDashPanelId === 'panelDonors' ? 'active-navy' : ''}" onclick="switchDashPanel('panelDonors')">
-            <span class="nav-ico">👥</span>
-            <span>Donors</span>
-          </button>
-          <button type="button" class="bottom-nav-btn ${activeDashPanelId === 'panelRequests' ? 'active-navy' : ''}" onclick="switchDashPanel('panelRequests'); fetchHistory();">
-            <span class="nav-ico">📋</span>
-            <span>Requests</span>
-          </button>
-          <button type="button" class="bottom-nav-btn ${activeDashPanelId === 'panelPoster' ? 'active' : ''}" onclick="switchDashPanel('panelPoster')">
-            <span class="nav-ico">🖼️</span>
-            <span>Poster</span>
-          </button>
-        `;
-      } else {
-        nav.classList.remove("admin-mode");
-        nav.innerHTML = `
-          <button type="button" class="bottom-nav-btn ${route !== '/dashboard' ? 'active' : ''}" onclick="navigateRoute('/registration')">
-            <span class="nav-ico">➕</span>
-            <span>${currentLang === 'ta' ? 'பதிவு' : 'Donor Register'}</span>
-          </button>
-          <button type="button" class="bottom-nav-btn ${route === '/dashboard' ? 'active-navy' : ''}" onclick="navigateRoute('/dashboard')">
-            <span class="nav-ico">🛡️</span>
-            <span>${currentLang === 'ta' ? 'நிர்வாகம்' : 'Admin Dashboard'}</span>
-          </button>
-        `;
-      }
-    }
+    function updateMobileBottomNav() {}
 
     function resolveCurrentRoute() {
       if (forcedRoute) return forcedRoute;
