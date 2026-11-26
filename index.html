@@ -533,25 +533,25 @@
       display: flex;
       align-items: center;
       margin-bottom: 9px;
-      gap: 6px;
+      gap: 8px;
       min-height: 38px;
     }
 
     .label-pill {
       background-color: #0d2340;
       color: #ffffff;
-      width: 43%;
-      min-height: 36px;
-      padding: 6px 10px;
+      width: 44%;
+      height: 38px;
+      padding: 0 14px;
       border-radius: 10px;
       font-size: 14.5px;
       font-weight: 800;
-      line-height: 1.25;
+      line-height: 1;
       white-space: nowrap;
-      text-align: center;
-      display: inline-flex;
+      text-align: left;
+      display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       flex-shrink: 0;
     }
 
@@ -578,13 +578,14 @@
     .value-input {
       width: 100%;
       border: none;
-      font-size: 17.5px;
+      font-size: 18px;
       font-weight: 800;
-      line-height: 1.3;
+      line-height: 36px;
+      height: 36px;
       color: #0d2340;
       outline: none;
       background-color: transparent;
-      padding: 4px 6px;
+      padding: 0 8px;
       text-align: left;
       letter-spacing: normal;
       word-spacing: normal;
@@ -727,9 +728,11 @@
 
       .label-pill {
         font-size: 12px;
-        padding: 5px 6px;
-        width: 43%;
-        min-height: 32px;
+        padding: 0 10px;
+        width: 44%;
+        height: 34px;
+        justify-content: flex-start;
+        text-align: left;
       }
 
       .colon-mark {
@@ -768,7 +771,8 @@
     @media (max-width: 360px) {
       .label-pill {
         font-size: 10.5px;
-        padding: 4px 4px;
+        padding: 0 8px;
+        height: 30px;
       }
       #posterDate {
         font-size: 16px;
@@ -2608,14 +2612,31 @@
 
     async function downloadPoster() {
       const posterElement = document.getElementById("posterCard");
-      const inputs = posterElement.querySelectorAll("input, select");
-      inputs.forEach(input => {
-        if (input.tagName === "SELECT") {
-          const selectedOption = input.options[input.selectedIndex];
-          input.setAttribute("data-value", selectedOption ? selectedOption.text : input.value);
-        } else {
-          input.setAttribute("value", input.value);
+      if (!posterElement) return;
+
+      if (document.fonts && document.fonts.ready) {
+        try { await document.fonts.ready; } catch (_) {}
+      }
+
+      const getFieldRenderInfo = (el) => {
+        const placeholder = el.getAttribute("placeholder") || "";
+        if (el.tagName === "SELECT") {
+          const opt = el.options[el.selectedIndex];
+          const text = (opt && !opt.disabled && opt.value) ? opt.text.trim() : "";
+          return { text: text || placeholder, isPlaceholder: !text && Boolean(placeholder) };
         }
+        const val = String(el.value ?? "").trim();
+        return { text: val || placeholder, isPlaceholder: !val && Boolean(placeholder) };
+      };
+
+      const sourceFields = Array.from(posterElement.querySelectorAll("input, select, textarea"));
+      const snapshotById = new Map();
+      const snapshotByIndex = new Map();
+
+      sourceFields.forEach((el, idx) => {
+        const info = getFieldRenderInfo(el);
+        snapshotByIndex.set(idx, info);
+        if (el.id) snapshotById.set(el.id, info);
       });
 
       try {
@@ -2626,20 +2647,211 @@
           backgroundColor: "#ffffff",
           logging: false,
           onclone: clonedDoc => {
-            const clonedSelects = clonedDoc.querySelectorAll("select");
-            clonedSelects.forEach(select => {
-              const span = clonedDoc.createElement("span");
-              span.className = select.className;
-              span.innerText = select.getAttribute("data-value") || select.value;
-              span.style.display = "inline-block";
-              select.parentNode.replaceChild(span, select);
+            const clonedCard = clonedDoc.getElementById("posterCard");
+            if (!clonedCard) return;
+
+            // Lock cloned poster width to canonical 480px and allow visible overflow so glyphs never clip
+            clonedCard.style.width = "480px";
+            clonedCard.style.maxWidth = "480px";
+            clonedCard.style.transform = "none";
+            clonedCard.style.boxShadow = "none";
+            clonedCard.style.overflow = "visible";
+
+            const formContent = clonedCard.querySelector(".form-content");
+            if (formContent) {
+              formContent.style.padding = "14px 14px 12px";
+              formContent.style.overflow = "visible";
+            }
+
+            const clonedFields = Array.from(clonedCard.querySelectorAll("input, select, textarea"));
+            clonedFields.forEach((field, idx) => {
+              const info = (field.id && snapshotById.get(field.id)) || snapshotByIndex.get(idx) || { text: "", isPlaceholder: false };
+              const displayText = info.text;
+              const isPlaceholder = info.isPlaceholder;
+
+              const isSelect = field.tagName === "SELECT";
+              const isPhoneInput = Boolean(field.closest(".phone-highlight"));
+              const isDateInput = field.id === "posterDate";
+              const isSerialInput = field.id === "serialNumber";
+              const isUnitsInput = field.id === "units" || field.classList.contains("units-badge");
+
+              const el = clonedDoc.createElement("div");
+              el.textContent = displayText;
+              el.style.fontFamily = "'Mukta Malar', 'Poppins', sans-serif";
+              el.style.letterSpacing = "normal";
+              el.style.wordSpacing = "normal";
+              el.style.fontVariantLigatures = "none";
+              el.style.whiteSpace = "nowrap";
+              el.style.overflow = "visible";
+              el.style.boxSizing = "border-box";
+              el.style.display = "flex";
+              el.style.alignItems = "center";
+
+              if (isSelect || field.classList.contains("blood-group-badge")) {
+                el.style.backgroundColor = "#a80000";
+                el.style.color = "#ffffff";
+                el.style.fontSize = "18px";
+                el.style.fontWeight = "900";
+                el.style.minHeight = "38px";
+                el.style.minWidth = "78px";
+                el.style.padding = "5px 16px";
+                el.style.borderRadius = "11px";
+                el.style.justifyContent = "center";
+                el.style.textAlign = "center";
+              } else if (isSerialInput) {
+                el.style.border = "2px solid #800000";
+                el.style.borderRadius = "8px";
+                el.style.color = isPlaceholder ? "#94a3b8" : "#800000";
+                el.style.backgroundColor = "#ffffff";
+                el.style.fontSize = "18px";
+                el.style.fontWeight = "900";
+                el.style.minWidth = "62px";
+                el.style.height = "38px";
+                el.style.padding = "4px 8px";
+                el.style.justifyContent = "center";
+                el.style.textAlign = "center";
+              } else if (isUnitsInput) {
+                el.style.border = "2px solid #0d2340";
+                el.style.borderRadius = "11px";
+                el.style.color = isPlaceholder ? "#94a3b8" : "#800000";
+                el.style.backgroundColor = "#ffffff";
+                el.style.fontSize = "18px";
+                el.style.fontWeight = "900";
+                el.style.minWidth = "74px";
+                el.style.height = "38px";
+                el.style.padding = "4px 12px";
+                el.style.justifyContent = "center";
+                el.style.textAlign = "center";
+              } else if (isDateInput) {
+                el.style.color = "#800000";
+                el.style.fontSize = "23px";
+                el.style.fontWeight = "900";
+                el.style.height = "38px";
+                el.style.padding = "4px 8px";
+                el.style.justifyContent = "center";
+                el.style.textAlign = "center";
+              } else if (isPhoneInput) {
+                el.style.color = isPlaceholder ? "#94a3b8" : "#800000";
+                el.style.fontSize = "18px";
+                el.style.fontWeight = "900";
+                el.style.flex = "1";
+                el.style.minWidth = "0";
+                el.style.height = "36px";
+                el.style.padding = "4px 8px";
+                el.style.justifyContent = "flex-start";
+                el.style.textAlign = "left";
+              } else {
+                el.style.color = isPlaceholder ? "#94a3b8" : "#0d2340";
+                el.style.fontSize = "18px";
+                el.style.fontWeight = "800";
+                el.style.width = "100%";
+                el.style.minHeight = "38px";
+                el.style.padding = "5px 8px";
+                el.style.justifyContent = "flex-start";
+                el.style.textAlign = "left";
+              }
+
+              if (field.parentNode) {
+                field.parentNode.replaceChild(el, field);
+              }
             });
+
+            const dateContainer = clonedCard.querySelector(".date-highlight-container");
+            if (dateContainer) {
+              dateContainer.style.overflow = "visible";
+              dateContainer.style.marginBottom = "16px";
+            }
+
+            const dateBox = clonedCard.querySelector(".date-highlight-box");
+            if (dateBox) {
+              dateBox.style.display = "inline-flex";
+              dateBox.style.alignItems = "center";
+              dateBox.style.justifyContent = "center";
+              dateBox.style.flexWrap = "nowrap";
+              dateBox.style.gap = "8px";
+              dateBox.style.padding = "7px 14px";
+              dateBox.style.overflow = "visible";
+            }
+
+            const dateLabel = clonedCard.querySelector(".date-highlight-label");
+            if (dateLabel) {
+              dateLabel.style.display = "inline-flex";
+              dateLabel.style.alignItems = "center";
+              dateLabel.style.justifyContent = "center";
+              dateLabel.style.fontWeight = "800";
+              dateLabel.style.height = "38px";
+              dateLabel.style.overflow = "visible";
+            }
+
+            const rows = clonedCard.querySelectorAll(".row-item");
+            rows.forEach(row => {
+              row.style.display = "flex";
+              row.style.alignItems = "center";
+              row.style.gap = "8px";
+              row.style.minHeight = "40px";
+              row.style.marginBottom = "10px";
+              row.style.overflow = "visible";
+            });
+
+            const pills = clonedCard.querySelectorAll(".label-pill");
+            pills.forEach(pill => {
+              pill.style.display = "flex";
+              pill.style.alignItems = "center";
+              pill.style.justifyContent = "flex-start";
+              pill.style.textAlign = "left";
+              pill.style.fontWeight = "800";
+              pill.style.width = "44%";
+              pill.style.minHeight = "40px";
+              pill.style.padding = "5px 14px";
+              pill.style.overflow = "visible";
+            });
+
+            const colons = clonedCard.querySelectorAll(".colon-mark");
+            colons.forEach(colon => {
+              colon.style.display = "inline-flex";
+              colon.style.alignItems = "center";
+              colon.style.justifyContent = "center";
+              colon.style.textAlign = "center";
+              colon.style.fontWeight = "900";
+              colon.style.width = "14px";
+              colon.style.minHeight = "40px";
+              colon.style.overflow = "visible";
+            });
+
+            const valueBoxes = clonedCard.querySelectorAll(".value-box");
+            valueBoxes.forEach(box => {
+              box.style.display = "flex";
+              box.style.alignItems = "center";
+              box.style.minHeight = "40px";
+              box.style.overflow = "visible";
+            });
+
+            const phoneBox = clonedCard.querySelector(".phone-highlight");
+            if (phoneBox) {
+              phoneBox.style.display = "flex";
+              phoneBox.style.alignItems = "center";
+              phoneBox.style.minHeight = "38px";
+              phoneBox.style.padding = "3px 10px 3px 6px";
+              phoneBox.style.overflow = "visible";
+            }
+
+            const callBtn = clonedCard.querySelector(".call-icon-btn");
+            if (callBtn) {
+              callBtn.style.display = "inline-flex";
+              callBtn.style.alignItems = "center";
+              callBtn.style.justifyContent = "center";
+              callBtn.style.width = "24px";
+              callBtn.style.height = "24px";
+              callBtn.style.textAlign = "center";
+              callBtn.style.fontWeight = "800";
+              callBtn.style.overflow = "visible";
+            }
           }
         });
 
         const patientInput = document.getElementById("patientName");
         const patientName = (patientInput?.value || "").trim();
-        const safePatientName = patientName.replace(/[\\/:*?"<>|]/g, "").replace(/\s+/g, " ").trim();
+        const safePatientName = patientName.replace(/[\/:*?"<>|]/g, "").replace(/\s+/g, " ").trim();
         const fileName = safePatientName ? `TNTJ-BloodRequest-${safePatientName}.png` : "TNTJ-BloodRequest.png";
 
         const link = document.createElement("a");
@@ -2699,6 +2911,9 @@
 
       try {
         const result = await postToSheet(requestData);
+        if (result && result.success === false) {
+          throw new Error(result.error || result.message || "Google Sheet rejected the request.");
+        }
         if (result?.opaque) {
           console.info("Google Apps Script POST sent successfully; response was not readable because of cross-origin restrictions.");
         }
@@ -2735,7 +2950,8 @@
         fetchHistory();
       } catch (err) {
         console.error("Error saving to sheet:", err);
-        showToast("Could not save the request to Google Sheet. The poster was not downloaded.", "error");
+        const reason = err && err.message ? ` (${err.message})` : "";
+        showToast(`Could not save to Google Sheet${reason}. Use "Download Poster (HD)" to save locally.`, "error");
       } finally {
         if (button) button.disabled = false;
       }
