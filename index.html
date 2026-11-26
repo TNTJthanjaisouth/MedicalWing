@@ -386,7 +386,7 @@
     }
 
     /* =====================================================
-       TNTJ EMERGENCY BLOOD REQUEST POSTER STYLES (SCALED TO SCREEN RESOLUTION)
+       TNTJ EMERGENCY BLOOD REQUEST POSTER STYLES (ALIGNED & RESPONSIVE)
        ===================================================== */
     .poster-workspace {
       display: flex;
@@ -431,7 +431,6 @@
       background-color: #800000;
     }
 
-    /* Responsive wrapper so 480px HD poster fits 100% cleanly on 320px/360px/390px screens without clipping */
     .poster-stage {
       width: 100%;
       display: flex;
@@ -458,7 +457,7 @@
     }
 
     .form-content {
-      padding: 10px 14px 4px;
+      padding: 12px 14px 8px;
       background-color: #ffffff;
     }
 
@@ -466,7 +465,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 0 auto 12px;
+      margin: 0 auto 14px;
       width: 100%;
     }
 
@@ -478,162 +477,198 @@
       background: #ffffff;
       border: 2.5px solid #800000;
       border-radius: 12px;
-      padding: 6px 16px;
+      padding: 6px 14px;
       box-shadow: 0 3px 8px rgba(128, 0, 0, 0.15);
       max-width: 100%;
     }
 
     .date-highlight-label {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 6px;
-      font-size: 18px;
+      gap: 5px;
+      font-size: 17px;
       font-weight: 800;
       color: #0d2340;
+      line-height: 1.2;
       white-space: nowrap;
     }
 
     .date-highlight-input {
       border: none;
       outline: none;
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 900;
       color: #800000;
       background: transparent;
-      width: 160px;
-      text-align: left;
-      letter-spacing: 0.5px;
+      width: 146px;
+      text-align: center;
+      line-height: 1.15;
+      letter-spacing: 0.4px;
+      padding: 0;
     }
 
     .serial-highlight-input {
       border: 2px solid #800000;
       outline: none;
-      font-size: 22px;
+      font-size: 19px;
       font-weight: 900;
       color: #800000;
       background: #ffffff;
-      width: 58px;
-      height: 38px;
+      width: 56px;
+      height: 36px;
       border-radius: 8px;
       text-align: center;
+      line-height: 1;
       letter-spacing: 1px;
-      padding: 2px 4px;
+      padding: 0 4px;
+      flex-shrink: 0;
     }
 
     .serial-highlight-input:focus {
-      box-shadow: 0 0 0 2px rgba(128, 0, 0, 0.12);
+      box-shadow: 0 0 0 2px rgba(128, 0, 0, 0.14);
     }
 
+    /* Consistent baseline & vertical alignment across every detail row */
     .row-item {
       display: flex;
       align-items: center;
-      margin-bottom: 8px;
-      gap: 2px;
+      margin-bottom: 9px;
+      gap: 6px;
+      min-height: 38px;
     }
 
     .label-pill {
       background-color: #0d2340;
       color: #ffffff;
-      width: 44%;
-      padding: 6px 8px;
+      width: 43%;
+      min-height: 36px;
+      padding: 6px 10px;
       border-radius: 10px;
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 800;
+      line-height: 1.25;
       white-space: nowrap;
       text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
     }
 
     .colon-mark {
-      width: 5%;
+      width: 14px;
       text-align: center;
       font-weight: 900;
       font-size: 18px;
-      color: #000;
+      line-height: 1;
+      color: #0d2340;
       flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .value-box {
-      width: 51%;
-      flex-grow: 1;
+      flex: 1;
       min-width: 0;
+      display: flex;
+      align-items: center;
     }
 
     .value-input {
       width: 100%;
       border: none;
-      font-size: 18px;
-      font-weight: 900;
+      font-size: 17.5px;
+      font-weight: 800;
+      line-height: 1.3;
       color: #0d2340;
       outline: none;
       background-color: transparent;
+      padding: 4px 6px;
+      text-align: left;
+      letter-spacing: normal;
+      word-spacing: normal;
+      font-variant-ligatures: none;
     }
 
     .blood-group-badge {
       background-color: #a80000;
       color: #ffffff !important;
-      font-size: 20px !important;
+      font-size: 18px !important;
       font-weight: 900 !important;
-      padding: 2px 16px;
-      border-radius: 12px;
-      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       text-align: center;
       width: auto !important;
+      min-height: 34px;
     }
 
     .units-badge {
-      border: 2px solid #000000;
-      border-radius: 12px;
+      border: 2px solid #0d2340;
+      border-radius: 11px;
       color: #800000 !important;
-      font-size: 20px !important;
+      font-size: 18px !important;
       font-weight: 900 !important;
-      width: 60px !important;
+      width: 64px !important;
+      min-height: 34px;
       text-align: center;
-      padding: 1px 0;
+      padding: 2px 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .phone-highlight {
       background-color: #fff9b8;
-      border: 2px solid #000000;
-      border-radius: 25px;
-      padding: 2px 8px;
+      border: 2px solid #0d2340;
+      border-radius: 999px;
+      padding: 3px 10px 3px 5px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
+      width: 100%;
+      min-height: 36px;
     }
 
     .phone-highlight input {
       border: none;
       background: transparent;
       color: #800000;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 900;
+      line-height: 1.2;
       text-align: left;
       width: 100%;
       min-width: 0;
+      padding: 0;
       outline: none;
+      letter-spacing: 0.3px;
     }
 
     .call-icon-btn {
       background: #1d4ed8;
-      color: white;
+      color: #ffffff;
       border-radius: 50%;
       width: 24px;
       height: 24px;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       font-size: 11px;
+      line-height: 1;
       flex-shrink: 0;
     }
 
     select.blood-group-badge {
       background-color: #a80000;
       color: #ffffff;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 900;
       padding: 4px 12px;
-      border-radius: 12px;
+      border-radius: 11px;
       border: none !important;
       outline: none !important;
       cursor: pointer;
@@ -650,18 +685,18 @@
     }
 
     #posterDate {
-      font-size: 30px;
+      font-size: 24px;
       font-weight: 900;
     }
 
     @media (max-width: 480px) {
       .form-content {
-        padding: 8px 10px 4px;
+        padding: 10px 10px 6px;
       }
 
       .date-highlight-box {
-        padding: 5px 10px;
-        gap: 6px;
+        padding: 5px 9px;
+        gap: 5px;
       }
 
       .date-highlight-label {
@@ -670,59 +705,85 @@
       }
 
       .date-highlight-label svg {
-        width: 20px;
-        height: 16px;
+        width: 18px;
+        height: 15px;
       }
 
       #posterDate {
-        font-size: 21px;
-        width: 124px;
+        font-size: 18px;
+        width: 112px;
       }
 
       .serial-highlight-input {
-        font-size: 16px;
-        width: 48px;
+        font-size: 15px;
+        width: 46px;
         height: 30px;
       }
 
+      .row-item {
+        gap: 4px;
+        margin-bottom: 8px;
+      }
+
       .label-pill {
-        font-size: 12.5px;
-        padding: 5px 4px;
-        width: 45%;
+        font-size: 12px;
+        padding: 5px 6px;
+        width: 43%;
+        min-height: 32px;
       }
 
       .colon-mark {
+        width: 10px;
         font-size: 15px;
       }
 
       .value-input {
         font-size: 15px;
+        padding: 3px 4px;
       }
 
       select.blood-group-badge,
       .blood-group-badge,
       .units-badge {
-        font-size: 16px !important;
+        font-size: 15.5px !important;
+      }
+
+      .phone-highlight {
+        padding: 2px 8px 2px 4px;
+        min-height: 32px;
+        gap: 5px;
       }
 
       .phone-highlight input {
-        font-size: 16px;
+        font-size: 15.5px;
+      }
+
+      .call-icon-btn {
+        width: 21px;
+        height: 21px;
+        font-size: 10px;
       }
     }
 
     @media (max-width: 360px) {
       .label-pill {
-        font-size: 11px;
-        padding: 5px 3px;
+        font-size: 10.5px;
+        padding: 4px 4px;
       }
       #posterDate {
-        font-size: 18px;
-        width: 108px;
+        font-size: 16px;
+        width: 98px;
       }
       .serial-highlight-input {
-        font-size: 14px;
-        width: 42px;
+        font-size: 13.5px;
+        width: 40px;
         height: 28px;
+      }
+      .value-input {
+        font-size: 13.5px;
+      }
+      .phone-highlight input {
+        font-size: 14px;
       }
     }
 
@@ -945,7 +1006,7 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
-            <span class="text-xs font-bold tracking-wide hidden xs:inline sm:inline"> </span>
+            <span class="text-xs font-bold tracking-wide hidden xs:inline sm:inline">Go to</span>
           </button>
 
           <div class="flex items-center gap-2 min-w-0">
@@ -1366,7 +1427,7 @@
                     </div>
 
                     <div class="row-item">
-                      <div class="label-pill">ஊர் </div>
+                      <div class="label-pill">ஊர்</div>
                       <div class="colon-mark">:</div>
                       <div class="value-box">
                         <input type="text" class="value-input" id="location" value="" placeholder="ஊர் உள்ளிடவும்" />
